@@ -3,10 +3,18 @@ console.log('Loaded ENV:', process.env);
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Serve uploaded images
 app.use('/uploads', express.static('uploads'));
@@ -26,6 +34,11 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Shopee API is running!');
+});
+
+// Health check endpoint for Render
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Server is healthy' });
 });
 
 // Error handling middleware
