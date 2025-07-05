@@ -7,7 +7,18 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from Netlify and other origins
+app.use(cors({
+  origin: [
+    'https://shopee-1.netlify.app',
+    'https://shopee-o2b3.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5000'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Create uploads directory if it doesn't exist
