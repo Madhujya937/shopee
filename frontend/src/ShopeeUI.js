@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronRight, LogOut } from 'lucide-react';
 import { useCart } from './context/CartContext';
+import { getApiUrl, getImageUrl } from './utils/api';
 
 const ShopeeUI = () => {
   const navigate = useNavigate();
@@ -41,7 +42,6 @@ const ShopeeUI = () => {
   });
   const [paymentLoading, setPaymentLoading] = useState(false);
   const userDropdownRef = useRef(null);
-  const API_URL = process.env.REACT_APP_API_URL || 'https://shopee-o2b3.onrender.com';
 
   // Wishlist state
   const [wishlist, setWishlist] = useState(() => {
@@ -62,7 +62,7 @@ const ShopeeUI = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`${API_URL}/api/products`)
+    axios.get(getApiUrl('/api/products'))
       .then(res => {
         setProducts(res.data);
         setError(null);
@@ -72,7 +72,7 @@ const ShopeeUI = () => {
         setProducts([]);
       })
       .finally(() => setLoading(false));
-  }, [API_URL]);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -115,12 +115,12 @@ const ShopeeUI = () => {
     setAuthError('');
     try {
       if (authMode === 'register') {
-        const res = await axios.post(`${API_URL}/api/users/register`, authForm);
+        const res = await axios.post(getApiUrl('/api/users/register'), authForm);
         setUser(res.data.user);
         localStorage.setItem('shopee_user', JSON.stringify({ ...res.data.user, token: res.data.token }));
         setShowAuth(false);
       } else {
-        const res = await axios.post(`${API_URL}/api/users/login`, {
+        const res = await axios.post(getApiUrl('/api/users/login'), {
           email: authForm.email,
           password: authForm.password
         });
@@ -205,7 +205,7 @@ const ShopeeUI = () => {
         try {
           console.log('Syncing item to backend cart:', item._id, item.quantity);
           const response = await axios.post(
-            `${API_URL}/api/cart/add`,
+            getApiUrl('/api/cart/add'),
             { productId: item._id, quantity: item.quantity },
             { headers: { Authorization: `Bearer ${user.token}` } }
           );
@@ -241,7 +241,7 @@ const ShopeeUI = () => {
 
       // Place order via backend
       const orderResponse = await axios.post(
-        `${API_URL}/api/orders`,
+        getApiUrl('/api/orders'),
         { shippingInfo },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -351,7 +351,7 @@ const ShopeeUI = () => {
                     <div key={item._id} className="flex items-center space-x-4 border-b pb-2">
                       <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded">
                         {item.images && item.images.length > 0 ? (
-                          <img src={`${API_URL}/${item.images[0]}`} alt={item.name} className="object-contain h-14 w-14" />
+                          <img src={getImageUrl(item.images[0])} alt={item.name} className="object-contain h-14 w-14" />
                         ) : (
                           <span className="text-gray-300 text-2xl">📦</span>
                         )}
@@ -631,7 +631,7 @@ const ShopeeUI = () => {
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 flex items-center justify-center bg-gray-100 rounded-lg p-4">
                 {selectedProduct.images && selectedProduct.images.length > 0 ? (
-                  <img src={`${API_URL}/${selectedProduct.images[0]}`} alt={selectedProduct.name} className="object-contain h-48 w-full" />
+                  <img src={getImageUrl(selectedProduct.images[0])} alt={selectedProduct.name} className="object-contain h-48 w-full" />
                 ) : (
                   <span className="text-gray-300 text-6xl">📦</span>
                 )}
@@ -746,7 +746,7 @@ const ShopeeUI = () => {
                           <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
                             {product.images && product.images.length > 0 ? (
                               <img 
-                                src={`${API_URL}/${product.images[0]}`} 
+                                src={getImageUrl(product.images[0])} 
                                 alt={product.name} 
                                 className="w-6 h-6 object-cover rounded"
                               />
@@ -901,7 +901,7 @@ const ShopeeUI = () => {
                         <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
                           {product.images && product.images.length > 0 ? (
                             <img 
-                              src={`${API_URL}/${product.images[0]}`} 
+                              src={getImageUrl(product.images[0])} 
                               alt={product.name} 
                               className="w-6 h-6 object-cover rounded"
                             />
@@ -1027,7 +1027,7 @@ const ShopeeUI = () => {
                 <div key={product._id} className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col items-center cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
                   <div className="w-full h-40 flex items-center justify-center bg-gray-100 rounded mb-4 overflow-hidden">
                     {product.images && product.images.length > 0 ? (
-                      <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-36 w-full" />
+                      <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-36 w-full" />
                     ) : (
                       <span className="text-gray-300 text-5xl">📦</span>
                     )}
@@ -1162,7 +1162,7 @@ const ShopeeUI = () => {
                   <div key={product._id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                       {product.images && product.images.length > 0 ? (
-                        <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-12 w-12" />
+                        <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-12 w-12" />
                       ) : (
                         <span className="text-gray-300 text-2xl">📦</span>
                       )}
