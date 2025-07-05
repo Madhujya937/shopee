@@ -11,7 +11,7 @@ const AllCategories = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [user, setUser] = useState(() => {
+  const [user] = useState(() => {
     const saved = localStorage.getItem('shopee_user');
     return saved ? JSON.parse(saved) : null;
   });
@@ -29,6 +29,7 @@ const AllCategories = () => {
     { id: 6, name: 'Books', icon: '📚', color: 'bg-gradient-to-br from-gray-100 to-slate-100' }
   ];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchProducts();
   }, []);

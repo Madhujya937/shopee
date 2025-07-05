@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, User, Edit, Save, X, Package, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, User, Edit, Save, X, Package } from 'lucide-react';
 import axios from 'axios';
 
 const UserProfile = () => {
@@ -120,7 +120,7 @@ const UserProfile = () => {
     });
   };
 
-  // Fetch orders when orders tab is active
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();

@@ -62,7 +62,7 @@ const ProductDetails = () => {
       })
       .catch(() => setError('Failed to load product'))
       .finally(() => setLoading(false));
-  }, [productId, API_URL]);
+  }, [productId]);
 
   const isInWishlist = (id) => wishlist.some(item => item._id === id);
   const addToWishlist = (prod) => {
