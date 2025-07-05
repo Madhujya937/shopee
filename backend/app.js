@@ -69,6 +69,12 @@ app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 // Add more routes as needed
 
+// Add middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
 app.get('/', (req, res) => {
   res.send('Shopee API is running!');
 });

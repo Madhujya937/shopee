@@ -22,16 +22,26 @@ router.post('/', upload.array('images'), async (req, res, next) => {
 // Get Products (with pagination & search)
 router.get('/', async (req, res, next) => {
   try {
+    console.log('GET /api/products - Request received');
     const { page = 1, limit = 10, search = '', category } = req.query;
+    console.log('Query params:', { page, limit, search, category });
+    
     const query = {
       ...(search && { name: { $regex: search, $options: 'i' } }),
       ...(category && { category })
     };
+    console.log('MongoDB query:', query);
+    
     const products = await Product.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit));
+    
+    console.log(`Found ${products.length} products`);
     res.json(products);
-  } catch (err) { next(err); }
+  } catch (err) { 
+    console.error('Error in GET /api/products:', err);
+    next(err); 
+  }
 });
 
 // Get Product by ID
