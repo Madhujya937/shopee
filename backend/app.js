@@ -61,6 +61,12 @@ const connectDB = async () => {
 // Connect to MongoDB
 connectDB();
 
+// Add middleware to log all requests (BEFORE routes)
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
 // Route placeholders
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
@@ -68,12 +74,6 @@ app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 // Add more routes as needed
-
-// Add middleware to log all requests
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
 
 app.get('/', (req, res) => {
   res.send('Shopee API is running!');
