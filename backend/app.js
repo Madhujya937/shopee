@@ -35,18 +35,25 @@ const connectDB = async () => {
   try {
     if (!process.env.MONGODB_URI) {
       console.error('MONGODB_URI is not defined in environment variables');
+      console.error('Please set up MongoDB Atlas and update your MONGODB_URI');
       process.exit(1);
     }
+    
+    console.log('Attempting to connect to MongoDB...');
+    console.log('MongoDB URI:', process.env.MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')); // Hide credentials
     
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 30000, // 30 seconds
       socketTimeoutMS: 45000,
+      bufferCommands: false,
+      bufferMaxEntries: 0,
     });
     console.log('MongoDB connected successfully');
   } catch (err) {
     console.error('MongoDB connection error:', err);
+    console.error('Please check your MONGODB_URI and ensure MongoDB Atlas is accessible');
     process.exit(1);
   }
 };
