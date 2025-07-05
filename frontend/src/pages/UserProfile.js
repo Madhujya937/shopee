@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, User, Edit, Save, X, Package } from 'lucide-react';
 import axios from 'axios';
@@ -55,7 +55,7 @@ const UserProfile = () => {
     }
   };
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setOrdersLoading(true);
       const response = await axios.get(`${API_URL}/api/orders`, {
@@ -72,7 +72,7 @@ const UserProfile = () => {
     } finally {
       setOrdersLoading(false);
     }
-  };
+  }, [API_URL, user.token, navigate]);
 
   const handleProfileUpdate = async () => {
     try {
@@ -120,12 +120,12 @@ const UserProfile = () => {
     });
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Fetch orders when orders tab is active
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchOrders]);
 
   if (loading) {
     return (

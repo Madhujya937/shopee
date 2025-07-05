@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, ShoppingCart, Heart, User, X } from 'lucide-react';
 import axios from 'axios';
@@ -29,12 +29,7 @@ const AllCategories = () => {
     { id: 6, name: 'Books', icon: '📚', color: 'bg-gradient-to-br from-gray-100 to-slate-100' }
   ];
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/api/products`);
@@ -46,7 +41,11 @@ const AllCategories = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleSearch = (e) => {
     e.preventDefault();
