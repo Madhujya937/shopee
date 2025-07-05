@@ -30,10 +30,29 @@ if (!fs.existsSync(uploadsDir)) {
 // Serve uploaded images
 app.use('/uploads', express.static('uploads'));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+// MongoDB connection with better error handling
+const connectDB = async () => {
+  try {
+    if (!process.env.MONGODB_URI) {
+      console.error('MONGODB_URI is not defined in environment variables');
+      process.exit(1);
+    }
+    
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
+};
+
+// Connect to MongoDB
+connectDB();
 
 // Route placeholders
 app.use('/api/users', require('./routes/userRoutes'));
@@ -54,8 +73,21 @@ app.get('/healthz', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({ message: err.message || 'Server Error' });
+  console.error('Error:', err);
+  res.status(err.status || 500).json({ 
+    message: err.message || 'Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`)); 
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`MongoDB URI: ${process.env.MONGODB_URI ? 'Set' : 'Not set'}`);
+}); 
