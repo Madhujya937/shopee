@@ -67,14 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Route placeholders
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/payments', require('./routes/paymentRoutes'));
-app.use('/api/cart', require('./routes/cartRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
-// Add more routes as needed
-
+// Basic routes first
 app.get('/', (req, res) => {
   res.send('Shopee API is running!');
 });
@@ -83,6 +76,14 @@ app.get('/', (req, res) => {
 app.get('/healthz', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Server is healthy' });
 });
+
+// Route placeholders - temporarily comment out to isolate issue
+// app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+// app.use('/api/payments', require('./routes/paymentRoutes'));
+// app.use('/api/cart', require('./routes/cartRoutes'));
+// app.use('/api/orders', require('./routes/orderRoutes'));
+// Add more routes as needed
 
 // Error handling middleware
 app.use((err, req, res, next) => {
