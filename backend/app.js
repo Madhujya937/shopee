@@ -90,6 +90,16 @@ try {
   console.error('❌ Error loading product routes:', error);
 }
 
+// Add back the user routes
+console.log('Loading user routes...');
+try {
+  const userRoutes = require('./routes/userRoutes');
+  app.use('/api/users', userRoutes);
+  console.log('✅ User routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading user routes:', error);
+}
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
