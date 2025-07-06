@@ -27,8 +27,13 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Serve uploaded images
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded images with absolute path and proper headers
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.set('Access-Control-Allow-Origin', '*');
+  }
+}));
 
 // MongoDB connection with better error handling
 const connectDB = async () => {
@@ -78,6 +83,42 @@ app.get('/healthz', (req, res) => {
 // Simple test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working' });
+});
+
+// Debug route to check uploads directory
+app.get('/api/debug/uploads', (req, res) => {
+  try {
+    const uploadsPath = path.join(__dirname, 'uploads');
+    const files = fs.readdirSync(uploadsPath);
+    res.json({ 
+      uploadsPath,
+      fileCount: files.length,
+      files: files.slice(0, 10) // Show first 10 files
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Simple image test route
+app.get('/api/test-image', (req, res) => {
+  try {
+    const uploadsPath = path.join(__dirname, 'uploads');
+    const files = fs.readdirSync(uploadsPath);
+    if (files.length > 0) {
+      const testImage = files[0];
+      res.json({ 
+        message: 'Image test',
+        testImage,
+        testUrl: `/uploads/${testImage}`,
+        fullUrl: `${req.protocol}://${req.get('host')}/uploads/${testImage}`
+      });
+    } else {
+      res.json({ message: 'No images found in uploads directory' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Add back the product routes with debugging

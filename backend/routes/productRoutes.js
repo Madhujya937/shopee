@@ -13,7 +13,8 @@ const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } }); // 2M
 // Create Product
 router.post('/', upload.array('images'), async (req, res, next) => {
   try {
-    const images = req.files ? req.files.map(f => f.path.replace(/\\/g, '/')) : [];
+    const images = req.files ? req.files.map(f => f.filename) : [];
+    console.log('Uploaded images:', images);
     const product = await Product.create({ ...req.body, images });
     res.status(201).json(product);
   } catch (err) { next(err); }
@@ -56,7 +57,8 @@ router.get('/:id', async (req, res, next) => {
 // Update Product
 router.put('/:id', upload.array('images'), async (req, res, next) => {
   try {
-    const images = req.files ? req.files.map(f => f.path.replace(/\\/g, '/')) : [];
+    const images = req.files ? req.files.map(f => f.filename) : [];
+    console.log('Updated images:', images);
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       { ...req.body, ...(images.length > 0 && { images }) },
