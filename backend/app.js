@@ -80,6 +80,9 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working' });
 });
 
+// Add back the product routes
+app.use('/api/products', require('./routes/productRoutes'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
