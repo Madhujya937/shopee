@@ -100,6 +100,26 @@ try {
   console.error('❌ Error loading user routes:', error);
 }
 
+// Add order routes
+console.log('Loading order routes...');
+try {
+  const orderRoutes = require('./routes/orderRoutes');
+  app.use('/api/orders', orderRoutes);
+  console.log('✅ Order routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading order routes:', error);
+}
+
+// Add cart routes
+console.log('Loading cart routes...');
+try {
+  const cartRoutes = require('./routes/cartRoutes');
+  app.use('/api/cart', cartRoutes);
+  console.log('✅ Cart routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading cart routes:', error);
+}
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
