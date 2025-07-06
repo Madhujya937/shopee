@@ -80,8 +80,15 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working' });
 });
 
-// Add back the product routes
-app.use('/api/products', require('./routes/productRoutes'));
+// Add back the product routes with debugging
+console.log('Loading product routes...');
+try {
+  const productRoutes = require('./routes/productRoutes');
+  app.use('/api/products', productRoutes);
+  console.log('✅ Product routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading product routes:', error);
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
