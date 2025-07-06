@@ -77,13 +77,10 @@ app.get('/healthz', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Server is healthy' });
 });
 
-// Route placeholders - temporarily comment out to isolate issue
-// app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-// app.use('/api/payments', require('./routes/paymentRoutes'));
-// app.use('/api/cart', require('./routes/cartRoutes'));
-// app.use('/api/orders', require('./routes/orderRoutes'));
-// Add more routes as needed
+// Simple test route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working' });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
