@@ -282,8 +282,8 @@ const ShopeeUI = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Auth Modal */}
-      {showAuth && (
+      {/* Auth Modal - Temporarily disabled for debugging */}
+      {/* {showAuth && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" onClick={() => setShowAuth(false)}>
           <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-6 relative" onClick={e => e.stopPropagation()}>
             <button onClick={() => setShowAuth(false)} className="absolute top-2 right-2 text-gray-500 hover:text-red-500"><X size={24} /></button>
@@ -332,7 +332,7 @@ const ShopeeUI = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Cart Sidebar/Modal */}
       {showCart && (
