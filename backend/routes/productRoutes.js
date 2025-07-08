@@ -1,48 +1,59 @@
 const express = require('express');
 const Product = require('../models/Product');
-const multer = require('multer');
 const router = express.Router();
 
-// Multer setup for image upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+// Cloudinary setup
+const { v2: cloudinary } = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } }); // 2MB
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'shopee-products',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 800, height: 800, crop: 'limit' }],
+  },
+});
+const upload = multer({ storage });
 
 // Create Product
 router.post('/', upload.array('images'), async (req, res, next) => {
   try {
-    const images = req.files ? req.files.map(f => f.filename) : [];
-    console.log('Uploaded images:', images);
+    if (!req.files || req.files.length === 0) {
+      console.error('No files uploaded');
+      return res.status(400).json({ message: 'No images uploaded' });
+    }
+    // Cloudinary URLs
+    const images = req.files.map(f => f.path || f.url || (f.cloudinary && f.cloudinary.url));
+    console.log('Cloudinary image URLs:', images);
     const product = await Product.create({ ...req.body, images });
     res.status(201).json(product);
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error('Error uploading product image:', err);
+    next(err);
+  }
 });
 
 // Get Products (with pagination & search)
 router.get('/', async (req, res, next) => {
   try {
-    console.log('GET /api/products - Request received');
     const { page = 1, limit = 10, search = '', category } = req.query;
-    console.log('Query params:', { page, limit, search, category });
-    
     const query = {
       ...(search && { name: { $regex: search, $options: 'i' } }),
       ...(category && { category })
     };
-    console.log('MongoDB query:', query);
-    
     const products = await Product.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit));
-    
-    console.log(`Found ${products.length} products`);
     res.json(products);
-  } catch (err) { 
-    console.error('Error in GET /api/products:', err);
-    next(err); 
-  }
+  } catch (err) { next(err); }
 });
 
 // Get Product by ID
@@ -57,16 +68,23 @@ router.get('/:id', async (req, res, next) => {
 // Update Product
 router.put('/:id', upload.array('images'), async (req, res, next) => {
   try {
-    const images = req.files ? req.files.map(f => f.filename) : [];
-    console.log('Updated images:', images);
+    // Always extract Cloudinary URLs, just like in POST
+    const images = req.files && req.files.length > 0
+      ? req.files.map(f => f.path || f.url || (f.cloudinary && f.cloudinary.url))
+      : undefined;
+    const updateData = { ...req.body };
+    if (images) updateData.images = images;
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, ...(images.length > 0 && { images }) },
+      updateData,
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error('Error updating product image:', err);
+    next(err);
+  }
 });
 
 // Delete Product
