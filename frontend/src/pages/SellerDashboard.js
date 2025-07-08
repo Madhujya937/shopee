@@ -6,6 +6,11 @@ import { useSellerAuth } from '../context/SellerAuthContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
+};
+
 const SellerDashboard = () => {
   const navigate = useNavigate();
   const { seller } = useSellerAuth();
@@ -288,7 +293,7 @@ const SellerDashboard = () => {
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
                             {product.images && product.images.length > 0 ? (
-                              <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-10 w-10 rounded" />
+                              <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-10 w-10 rounded" />
                             ) : (
                               <span className="text-gray-400">📦</span>
                             )}

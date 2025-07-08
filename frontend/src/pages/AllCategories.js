@@ -109,6 +109,11 @@ const AllCategories = () => {
 
   const cartCount = 0; // This would come from cart context
 
+  const getImageUrl = (img) => {
+    if (!img) return '';
+    return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -298,7 +303,7 @@ const AllCategories = () => {
                 <div key={product._id} className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col items-center cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
                   <div className="w-full h-40 flex items-center justify-center bg-gray-100 rounded mb-4 overflow-hidden">
                     {product.images && product.images.length > 0 ? (
-                      <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-36 w-full" />
+                      <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-36 w-full" />
                     ) : (
                       <span className="text-gray-300 text-5xl">📦</span>
                     )}
@@ -368,7 +373,7 @@ const AllCategories = () => {
                   <div key={product._id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                       {product.images && product.images.length > 0 ? (
-                        <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-12 w-12" />
+                        <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-12 w-12" />
                       ) : (
                         <span className="text-gray-300 text-2xl">📦</span>
                       )}

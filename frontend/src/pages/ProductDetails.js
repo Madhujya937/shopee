@@ -5,6 +5,11 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
+};
+
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -219,7 +224,7 @@ const ProductDetails = () => {
                     onClick={() => setZoomed(z => !z)}
                   >
                     <img
-                      src={`${API_URL}/${product.images[selectedImage]}`}
+                      src={getImageUrl(product.images[selectedImage])}
                       alt={product.name}
                       className={`object-contain h-48 w-full transition-transform duration-200 ${zoomed ? 'scale-150' : ''}`}
                       style={zoomed ? { cursor: 'zoom-out', zIndex: 10 } : {}}
@@ -229,7 +234,7 @@ const ProductDetails = () => {
                     {product.images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={`${API_URL}/${img}`}
+                        src={getImageUrl(img)}
                         alt={`Thumbnail ${idx + 1}`}
                         className={`h-12 w-12 object-contain rounded border-2 cursor-pointer ${selectedImage === idx ? 'border-purple-500' : 'border-gray-200'}`}
                         onClick={e => { e.stopPropagation(); setSelectedImage(idx); setZoomed(false); }}
@@ -387,7 +392,7 @@ const ProductDetails = () => {
                       onClick={() => navigate(`/product/${prod._id}`)}
                     >
                       <img
-                        src={prod.images && prod.images[0] ? `${API_URL}/${prod.images[0]}` : ''}
+                        src={getImageUrl(prod.images[0])}
                         alt={prod.name}
                         className="h-24 w-24 object-contain mb-2 rounded"
                       />

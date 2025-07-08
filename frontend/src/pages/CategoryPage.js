@@ -6,6 +6,11 @@ import { useCart } from '../context/CartContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
+};
+
 const CategoryPage = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
@@ -265,7 +270,7 @@ const CategoryPage = () => {
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 flex items-center justify-center bg-gray-100 rounded-lg p-4">
                 {selectedProduct.images && selectedProduct.images.length > 0 ? (
-                  <img src={`${API_URL}/${selectedProduct.images[0]}`} alt={selectedProduct.name} className="object-contain h-48 w-full" />
+                  <img src={getImageUrl(selectedProduct.images[0])} alt={selectedProduct.name} className="object-contain h-48 w-full" />
                 ) : (
                   <span className="text-gray-300 text-6xl">📦</span>
                 )}
@@ -560,7 +565,7 @@ const CategoryPage = () => {
                 <div key={product._id} className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col items-center cursor-pointer" onClick={() => setSelectedProduct(product)}>
                   <div className="w-full h-40 flex items-center justify-center bg-gray-100 rounded mb-4 overflow-hidden">
                     {product.images && product.images.length > 0 ? (
-                      <img src={`${API_URL}/${product.images[0]}`} alt={product.name} className="object-contain h-36 w-full" />
+                      <img src={getImageUrl(product.images[0])} alt={product.name} className="object-contain h-36 w-full" />
                     ) : (
                       <span className="text-gray-300 text-5xl">📦</span>
                     )}
