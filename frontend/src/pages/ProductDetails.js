@@ -2,13 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, X } from 'lucide-react';
 import axios from 'axios';
+import { getImageUrl } from '../utils/api';
 
 const API_URL = process.env.REACT_APP_API_URL;
-
-const getImageUrl = (img) => {
-  if (!img) return '';
-  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
-};
 
 const ProductDetails = () => {
   const { productId } = useParams();

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, ShoppingCart, Heart, User, X } from 'lucide-react';
 import axios from 'axios';
+import { getImageUrl } from '../utils/api';
 
 const AllCategories = () => {
   const navigate = useNavigate();
@@ -109,11 +110,6 @@ const AllCategories = () => {
 
   const cartCount = 0; // This would come from cart context
 
-  const getImageUrl = (img) => {
-    if (!img) return '';
-    return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -216,7 +212,7 @@ const AllCategories = () => {
                         <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
                           {product.images && product.images.length > 0 ? (
                             <img 
-                              src={`${API_URL}/${product.images[0]}`} 
+                              src={getImageUrl(product.images[0])} 
                               alt={product.name} 
                               className="w-6 h-6 object-cover rounded"
                             />

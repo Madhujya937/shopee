@@ -3,13 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Plus, Edit, Trash2, Search, Package, DollarSign, TrendingUp } from 'lucide-react';
 import { useSellerAuth } from '../context/SellerAuthContext';
+import { getImageUrl } from '../utils/api';
 
 const API_URL = process.env.REACT_APP_API_URL;
-
-const getImageUrl = (img) => {
-  if (!img) return '';
-  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
-};
 
 const SellerDashboard = () => {
   const navigate = useNavigate();

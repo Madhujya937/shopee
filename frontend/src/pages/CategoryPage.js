@@ -3,13 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ShoppingCart, Search } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { getImageUrl } from '../utils/api';
 
 const API_URL = process.env.REACT_APP_API_URL;
-
-const getImageUrl = (img) => {
-  if (!img) return '';
-  return img.startsWith('http') ? img : `${API_URL}/uploads/${img}`;
-};
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
